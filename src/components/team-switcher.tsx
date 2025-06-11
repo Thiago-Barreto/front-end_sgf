@@ -21,6 +21,7 @@ import { getUserLogin } from "@/utils/user";
 export function TeamSwitcher({
   teams,
   onTeamChange,
+  activeTeam,
 }: Readonly<{
   teams: {
     name: string;
@@ -32,15 +33,18 @@ export function TeamSwitcher({
     logo: React.ElementType;
     plan: string;
   }) => void;
+  activeTeam: {
+    name: string;
+    logo: React.ElementType;
+    plan: string;
+  };
 }>) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
 
   if (!activeTeam) {
     return null;
   }
   const handleTeamChange = (team) => {
-    setActiveTeam(team);
     onTeamChange(team);
   };
 

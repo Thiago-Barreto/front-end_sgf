@@ -4,6 +4,7 @@ import {
   Bot,
   ChartArea,
   Cpu,
+  FolderKanban,
   Map,
   PackageSearch,
   PieChart,
@@ -59,23 +60,16 @@ const data = {
       plan: "Desenvolvimento de Produtos",
       navMain: [
         {
-          title: "Models",
+          id: 1,
+          title: "Modelos",
+          url: "/sgf/grupomulti/private/engineering/models",
+          icon: FolderKanban,
+        },
+        {
+          id: 2,
+          title: "NPI",
           url: "#",
           icon: Bot,
-          items: [
-            {
-              title: "Genesis",
-              url: "#",
-            },
-            {
-              title: "Explorer",
-              url: "#",
-            },
-            {
-              title: "Quantum",
-              url: "#",
-            },
-          ],
         },
       ],
     },
@@ -134,22 +128,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = getUserLogin();
   const { sector } = user;
 
-  const initialTeam = sector
-    ? data.teams[0]
-    : data.teams.find((team) => team.name === "Test Engineering") ||
-      data.teams[0];
-  const [activeTeam, setActiveTeam] = React.useState(initialTeam);
+  const initialTeams =
+    sector === "System Developer"
+      ? data.teams
+      : data.teams.filter((team) => {
+          if (sector === "Product Engineering")
+            return team.name === "Product Engineering";
+          if (sector === "Test Engineering")
+            return team.name === "Test Engineering";
+          if (sector === "Process Engineering")
+            return team.name === "Process Engineering";
+          return false;
+        });
 
+  const [activeTeams, setActiveTeams] = React.useState(initialTeams);
+  const [activeTeam, setActiveTeam] = React.useState(activeTeams[0]);
   const handleTeamChange = (team) => {
-    if (sector) {
-      setActiveTeam(team);
-    }
+    setActiveTeam(team);
   };
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} onTeamChange={handleTeamChange} />
+        <TeamSwitcher
+          teams={activeTeams}
+          onTeamChange={handleTeamChange}
+          activeTeam={activeTeam}
+        />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={activeTeam.navMain} />

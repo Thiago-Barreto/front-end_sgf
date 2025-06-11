@@ -1,4 +1,8 @@
-export type sector = "System Developer" | "Test Engineering";
+export type sector =
+  | "System Developer"
+  | "Test Engineering"
+  | "Product Engineering"
+  | "Process Engineering";
 
 export interface LinkItem {
   id: number;

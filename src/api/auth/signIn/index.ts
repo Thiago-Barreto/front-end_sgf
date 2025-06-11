@@ -31,7 +31,7 @@ export function useSignIn() {
       const client = JSON.stringify(user);
       Cookies.set("client", client);
       Cookies.set("token", token);
-      navigate("/sgf/home");
+      navigate("/sgf/npi schedule");
     },
   });
   return mutate;
