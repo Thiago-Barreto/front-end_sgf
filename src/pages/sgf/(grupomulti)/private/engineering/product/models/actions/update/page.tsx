@@ -1,3 +1,4 @@
+import { useModelUpdate } from "@/api/private/engineering/product/models";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,11 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  ModelFormCreate,
-  type ModelsCreate,
-} from "@/schema/private/engineering/product/models";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
   Select,
   SelectContent,
   SelectGroup,
@@ -26,21 +22,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { InfoIcon } from "lucide-react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
-import { useNewModel } from "@/api/private/engineering/product/models";
+import {
+  ModelsUpdateForm,
+  type ModelsTypeUpdate,
+} from "@/schema/private/engineering/product/models";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
-export default function NewModel() {
-  const methods = useForm<ModelsCreate>({
-    resolver: zodResolver(ModelFormCreate),
+interface ModelsUpdateProps {
+  initialData: ModelsTypeUpdate;
+}
+
+export default function ModelsUpdate({ initialData }: ModelsUpdateProps) {
+  const { mutateAsync, isPending } = useModelUpdate();
+  const methods = useForm<ModelsTypeUpdate>({
+    resolver: zodResolver(ModelsUpdateForm),
+    defaultValues: initialData,
   });
-  const { handleSubmit, register, reset, setValue, control } = methods;
+  const { register, handleSubmit, control, setValue } = methods;
   const [open, setOpen] = useState(false);
-
-  const clearForm = () => {
-    reset();
-  };
 
   const handleWeightAndAmount = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -51,10 +53,8 @@ export default function NewModel() {
     setValue(field, numericValue, { shouldValidate: true });
   };
 
-  const { mutateAsync } = useNewModel();
-
-  const handleNewModel = async (data: ModelsCreate) => {
-    await mutateAsync(data);
+  const handleUpdate = async (data: ModelsTypeUpdate) => {
+    await mutateAsync({ data });
     setOpen(false);
   };
 
@@ -62,16 +62,14 @@ export default function NewModel() {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button className="cursor-pointer bg-blue-600 hover:bg-blue-700">
-          Novo modelo
+          Atualizar
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="w-[900px]">
         <AlertDialogHeader className="flex flex-col items-center justify-center">
-          <AlertDialogTitle>Cadastrar novo modelo</AlertDialogTitle>
-          <AlertDialogDescription className="flex items-center gap-1 text-xs text-yellow-600">
-            <InfoIcon size={12} />
-            <p>Alguns campos são obrigatórios</p>
-            <InfoIcon size={12} />
+          <AlertDialogTitle>Atualizar "{initialData.Cod_sap}"</AlertDialogTitle>
+          <AlertDialogDescription className="text-xs text-yellow-500">
+            Preencha todos os campos e mantenha os dados sempre atualizados
           </AlertDialogDescription>
         </AlertDialogHeader>
         <FormProvider {...methods}>
@@ -202,13 +200,47 @@ export default function NewModel() {
                 )}
               />
             </div>
-            <AlertDialogFooter className="">
-              <AlertDialogCancel onClick={clearForm}>Cancel</AlertDialogCancel>
+            <div className="flex flex-col gap-0.5">
+              <Label className="text-xs">
+                Status <span className="text-red-600">*</span>
+              </Label>
+              <Controller
+                control={control}
+                name="Status"
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    onValueChange={(value) => field.onChange(value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione um status" />
+                    </SelectTrigger>
+                    <SelectGroup>
+                      <SelectContent>
+                        <SelectLabel>Status</SelectLabel>
+                        <SelectItem value="ATIVO">ATIVO</SelectItem>
+                        <SelectItem value="DESATIVADO">DESATIVADO</SelectItem>
+                      </SelectContent>
+                    </SelectGroup>
+                  </Select>
+                )}
+              />
+            </div>
+            <AlertDialogFooter className="col-span-3">
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 className="cursor-pointer bg-blue-600 hover:bg-blue-700"
-                onClick={handleSubmit((data) => handleNewModel(data))}
+                onClick={handleSubmit((data) => handleUpdate(data))}
+                disabled={isPending}
               >
-                Continue
+                {isPending ? (
+                  <p className="flex items-center gap-1">
+                    Atualizando{" "}
+                    <LoaderCircle size={10} className="animate-spin" />
+                  </p>
+                ) : (
+                  "Atualizar"
+                )}
               </AlertDialogAction>
             </AlertDialogFooter>
           </form>

@@ -20,4 +20,6 @@ export interface ModelsData {
 
 export interface ModelsResponse {
   models: ModelsData[];
+  message: string;
+  title: string;
 }

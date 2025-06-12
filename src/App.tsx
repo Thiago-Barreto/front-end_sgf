@@ -6,6 +6,7 @@ import SignIn from "./pages/auth/signIn/page";
 import DashboardNpi from "./pages/sgf/(dashboard)/page";
 import UserMain from "./pages/sgf/(grupomulti)/public/users/page";
 import ModelsMain from "./pages/sgf/(grupomulti)/private/engineering/product/models/page";
+import NpiMain from "./pages/sgf/(grupomulti)/private/engineering/product/npi/page";
 
 export function AnimatesRoutes() {
   return (
@@ -17,6 +18,10 @@ export function AnimatesRoutes() {
         <Route
           path="/sgf/grupomulti/private/engineering/models"
           element={<ModelsMain />}
+        />
+        <Route
+          path="/sgf/grupomulti/private/engineering/npi"
+          element={<NpiMain />}
         />
         {/* <Route path="*" element={<DefaultErro />} /> */}
       </Routes>

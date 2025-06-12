@@ -48,7 +48,7 @@ export default function ProfileUser() {
           Perfil
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[500px]">
         <AlertDialogHeader className="relative">
           <div className="flex h-28 w-full items-center justify-center rounded-t bg-blue-700">
             <img src={LogoWhite} alt="" />

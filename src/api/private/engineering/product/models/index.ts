@@ -1,5 +1,10 @@
 import type { ModelsResponse } from "@/interface/private/engineering/product/models";
-import { useQuery } from "@tanstack/react-query";
+import {
+  type ModelsCreate,
+  type ModelsTypeUpdate,
+} from "@/schema/private/engineering/product/models";
+import { getUserLogin } from "@/utils/user";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -29,4 +34,68 @@ export function useModelsAll() {
     refetchInterval: 60 * 5 * 1000,
   });
   return { ...query, models: query.data?.models };
+}
+
+const newModel = async (data: ModelsCreate) => {
+  const user = getUserLogin();
+  try {
+    const response = await axios.post<ModelsResponse>(
+      `${import.meta.env.VITE_API_KEY_PROD}/models/create`,
+      {
+        ...data,
+        createUser: user.UserID,
+      },
+    );
+    toast.success(response.data.message);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    toast.error(error?.response.data.title, {
+      description: error?.response.data.message,
+    });
+  }
+};
+
+export function useNewModel() {
+  const queryClient = useQueryClient();
+  const mutate = useMutation({
+    mutationFn: newModel,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["models"] });
+    },
+  });
+  return mutate;
+}
+
+const updateModel = async (data: ModelsTypeUpdate) => {
+  const user = getUserLogin();
+  try {
+    const response = await axios.put<ModelsResponse>(
+      `${import.meta.env.VITE_API_KEY_PROD}/models/update/${data.ID}`,
+      {
+        ...data,
+        updateUser: user.UserID,
+      },
+    );
+    toast.success(response.data.title, {
+      description: response.data.message,
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    toast.error(error?.response.data.title, {
+      description: error?.response.data.message,
+    });
+  }
+};
+
+export function useModelUpdate() {
+  const queryClient = useQueryClient();
+  const mutate = useMutation({
+    mutationFn: ({ data }: { data: ModelsTypeUpdate }) => updateModel(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["models"] });
+    },
+  });
+  return mutate;
 }

@@ -22,6 +22,7 @@ import CopyText from "@/components/copy";
 import { Pagination } from "@/components/pagination";
 import { ExcelExport } from "@/components/buttons/excel";
 import NewModel from "./actions/register/page";
+import ModelsUpdate from "./actions/update/page";
 
 export default function ModelsMain() {
   const { data: models = [], isLoading } = useModelsAll();
@@ -117,9 +118,9 @@ export default function ModelsMain() {
           <div
             className={`flex flex-col ${models.length <= 15 ? "h-[460px] 2xl:h-[752px]" : ""}`}
           >
-            <div className="flex flex-2/3 flex-col rounded-md border">
+            <div className="flex flex-2/3 flex-col overflow-hidden rounded-md border">
               <Table>
-                <TableHeader className="bg-background sticky top-0 z-10 shadow-md">
+                <TableHeader className="bg-background sticky top-0 z-10 shadow-sm">
                   <TableRow>
                     <TableHead>Nome</TableHead>
                     <TableHead>Código do SAP</TableHead>
@@ -138,7 +139,7 @@ export default function ModelsMain() {
                     <TableHead>Ações</TableHead>
                   </TableRow>
                   <TableRow>
-                    <TableHead>
+                    <TableHead className="py-2">
                       <Input
                         placeholder="Pesquisar"
                         {...register("Nome")}
@@ -219,55 +220,59 @@ export default function ModelsMain() {
                   {currentData?.map((data: ModelsData) => {
                     return (
                       <TableRow key={data.ID}>
-                        <TableCell>
+                        <TableCell className="border">
                           {data.Nome.length > 12
                             ? data.Nome.slice(0, 12) + "..."
                             : data.Nome}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="border">
                           <p className="flex items-center gap-1 text-xs">
                             {data.Cod_sap}
                             <CopyText text={data.Cod_sap} />
                           </p>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="border">
                           {data.Descricao.length > 10
                             ? data.Descricao.slice(0, 21) + "..."
                             : data.Descricao}
                         </TableCell>
 
-                        <TableCell className="text-center">
+                        <TableCell className="border text-center">
                           {data.Qtd_inner}
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="border text-center">
                           {data.Qtd_caixa}
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="border text-center">
                           {data.Peso_master}
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="border text-center">
                           {data.Peso_inner}
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="border text-center">
                           {data.Ean === "" || data.Ean === null ? (
                             <p>N/A</p>
                           ) : (
                             data.Ean
                           )}
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="border text-center">
                           {data.Roteiro === "" || data.Roteiro === null ? (
                             <p>N/A</p>
                           ) : (
                             data.Roteiro
                           )}
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="border text-center">
                           {data.ProcessLevel}
                         </TableCell>
-                        <TableCell>{data.FamilyType}</TableCell>
-                        <TableCell>{data.auxPcbaType}</TableCell>
-                        <TableCell>
+                        <TableCell className="border">
+                          {data.FamilyType}
+                        </TableCell>
+                        <TableCell className="border">
+                          {data.auxPcbaType}
+                        </TableCell>
+                        <TableCell className="border">
                           {data.prefixSerial === "" ||
                           data.prefixSerial === null ? (
                             <p>N/A</p>
@@ -275,7 +280,7 @@ export default function ModelsMain() {
                             data.prefixSerial
                           )}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="border">
                           <Badge className="border border-stone-200 bg-transparent text-stone-700 dark:text-stone-400">
                             <span
                               className={`h-1.5 w-1.5 rounded-full ${data.Status === "ATIVO" ? "bg-green-500" : data.Status === "DESATIVADO" && "bg-red-500"}`}
@@ -283,7 +288,9 @@ export default function ModelsMain() {
                             <p className="text-[10px]">{data.Status}</p>
                           </Badge>
                         </TableCell>
-                        <TableCell>Ações</TableCell>
+                        <TableCell className="border">
+                          <ModelsUpdate initialData={data} />
+                        </TableCell>
                       </TableRow>
                     );
                   })}

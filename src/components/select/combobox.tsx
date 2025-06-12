@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 
@@ -18,59 +16,35 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
+import { useModelsAll } from "@/api/private/engineering/product/models";
+import type { ModelsData } from "@/interface/private/engineering/product/models";
 
 export function ExampleCombobox() {
+  const { data: models = [] } = useModelsAll();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
+        <Button className="justify-between border bg-transparent font-normal text-stone-500 hover:bg-transparent">
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
+            ? models.find(
+                (framework: ModelsData) => framework.Cod_sap === value,
+              )?.Cod_sap
+            : "Selecione um Modelo"}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput placeholder="Procurar Modelo" />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {models.map((framework: ModelsData) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={framework.ID}
+                  value={framework.Cod_sap}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
@@ -79,10 +53,10 @@ export function ExampleCombobox() {
                   <CheckIcon
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0",
+                      value === framework.Cod_sap ? "opacity-100" : "opacity-0",
                     )}
                   />
-                  {framework.label}
+                  {framework.Cod_sap}
                 </CommandItem>
               ))}
             </CommandGroup>

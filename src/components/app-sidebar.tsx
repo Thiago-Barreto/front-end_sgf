@@ -3,6 +3,7 @@ import {
   AudioWaveform,
   Bot,
   ChartArea,
+  ChartNoAxesCombined,
   Cpu,
   FolderKanban,
   Map,
@@ -68,8 +69,8 @@ const data = {
         {
           id: 2,
           title: "NPI",
-          url: "#",
-          icon: Bot,
+          url: "/sgf/grupomulti/private/engineering/npi",
+          icon: ChartNoAxesCombined,
         },
       ],
     },
@@ -110,16 +111,6 @@ const data = {
       name: "Usuários",
       url: "/sgf/grupomulti/public/users",
       icon: UserRoundCog,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };
