@@ -1,4 +1,3 @@
-import { useNewProgrammingNpi } from "@/api/private/engineering/product/npi";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,9 +9,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandGroup,
@@ -25,14 +21,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  NpiWithoutId,
-  type NewProgrammingNpiType,
-} from "@/schema/private/engineering/product/npi";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, FormProvider, useForm } from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -42,49 +30,103 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useModelsAll } from "@/api/private/engineering/product/models";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { NpiData } from "@/interface/dashboard/npi";
+import {
+  NpiWithoutStatus,
+  type UpdateProgrammingNpi,
+} from "@/schema/private/engineering/product/npi";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useMemo, useState } from "react";
+import { useModelsAll } from "@/api/private/engineering/product/models";
 import type { ModelsData } from "@/interface/private/engineering/product/models";
+import { cn } from "@/lib/utils";
+import { ChevronsUpDownIcon, CheckIcon, Loader } from "lucide-react";
+import { toast } from "sonner";
+import { useUpdateProgrammingNpi } from "@/api/private/engineering/product/npi";
 
-export default function NewNpi() {
-  const methods = useForm<NewProgrammingNpiType>({
-    resolver: zodResolver(NpiWithoutId),
+interface ProgrammingNpiUpdateProps {
+  initialData: NpiData;
+}
+
+export default function ProgrammingNpiUpdate({
+  initialData,
+}: ProgrammingNpiUpdateProps) {
+  const methods = useForm<UpdateProgrammingNpi>({
+    resolver: zodResolver(NpiWithoutStatus),
+    defaultValues: {
+      ...initialData,
+      estimated_engineering_pilot_date:
+        initialData.estimated_engineering_pilot_date
+          ? new Date(initialData.estimated_engineering_pilot_date)
+              .toISOString()
+              .split("T")[0]
+          : "",
+      estimated_pilot_production_date:
+        initialData.estimated_pilot_production_date
+          ? new Date(initialData.estimated_pilot_production_date)
+              .toISOString()
+              .split("T")[0]
+          : "",
+    },
   });
-  const { mutateAsync, isPending } = useNewProgrammingNpi();
+  const { register, handleSubmit, setValue, control, watch } = methods;
+
   const [open, setOpen] = useState(false);
-  const { register, handleSubmit, control, watch, setValue } = methods;
+
   const { data: models = [] } = useModelsAll();
+
   const selectModel = watch("code");
+
+  const selectStatusEng = watch("engineering_pilot_status");
+  const selectStatusProd = watch("production_pilot_status");
+
   const filterModels = useMemo(() => {
-    return models.filter((data) => {
+    return models.filter((data: ModelsData) => {
       return selectModel === data.Cod_sap;
     });
   }, [selectModel, models]);
+
   setValue("family", filterModels[0]?.FamilyType);
   setValue("description", filterModels[0]?.Descricao);
-  const handleCreate = async (data: NewProgrammingNpiType) => {
-    console.log(data);
-    await mutateAsync(data);
+
+  const { mutateAsync, isPending } = useUpdateProgrammingNpi();
+  const handleUpdate = async (data: UpdateProgrammingNpi) => {
+    if (
+      (selectStatusEng === "Atrasado" && !data.justification_engineering) ||
+      (selectStatusProd === "Atrasado" && !data.justification_production)
+    ) {
+      toast.info("Piloto Atrasado", {
+        description: "Por favor, justique o atraso.",
+      });
+    } else {
+      console.log(data);
+      await mutateAsync({ data });
+    }
   };
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className="cursor-pointer bg-blue-600 hover:bg-blue-700">
-          Programar NPI
-        </Button>
+        <Button className="bg-blue-600 hover:bg-blue-700">Atualizar</Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="w-[900px]">
         <AlertDialogHeader>
-          <AlertDialogTitle>Programar NPI</AlertDialogTitle>
+          <AlertDialogTitle>Atualizar programação de NPI</AlertDialogTitle>
           <AlertDialogDescription>
-            Preencha o formulário com os dados da nova programação
+            Mantenha os dados do NPI atualizados diariamente.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <FormProvider {...methods}>
           <form className="grid grid-cols-3 items-end justify-end gap-x-4 gap-y-8">
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs" htmlFor="sku">
-                SKU <span className="text-red-600">*</span>
+              <Label
+                className="text-xs after:text-red-600 after:content-['*']"
+                htmlFor="sku"
+              >
+                SKb
               </Label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
@@ -134,8 +176,11 @@ export default function NewNpi() {
               </Popover>
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs" htmlFor="family">
-                Família <span className="text-red-600">*</span>
+              <Label
+                className="text-xs after:text-red-600 after:content-['*']"
+                htmlFor="family"
+              >
+                Famílib
               </Label>
               <Input
                 {...register("family")}
@@ -145,8 +190,11 @@ export default function NewNpi() {
               />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs" htmlFor="description">
-                Descrição <span className="text-red-600">*</span>
+              <Label
+                className="text-xs after:text-red-600 after:content-['*']"
+                htmlFor="description"
+              >
+                Descriçãb
               </Label>
               <Input
                 {...register("description")}
@@ -156,8 +204,8 @@ export default function NewNpi() {
               />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs">
-                Tipo de Embalagem <span className="text-red-600">*</span>
+              <Label className="text-xs after:text-red-600 after:content-['*']">
+                Tipo de Embalageb
               </Label>
               <Controller
                 control={control}
@@ -186,8 +234,8 @@ export default function NewNpi() {
               />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs">
-                Tipo de Produção <span className="text-red-600">*</span>
+              <Label className="text-xs after:text-red-600 after:content-['*']">
+                Tipo de Produçãb
               </Label>
               <Controller
                 control={control}
@@ -216,8 +264,8 @@ export default function NewNpi() {
               />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs">
-                Classe de Produto <span className="text-red-600">*</span>
+              <Label className="text-xs after:text-red-600 after:content-['*']">
+                Classe de Produtb
               </Label>
               <Controller
                 control={control}
@@ -243,14 +291,20 @@ export default function NewNpi() {
               />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs" htmlFor="halb">
-                Halb <span className="text-red-600">*</span>
+              <Label
+                className="text-xs after:text-red-600 after:content-['*']"
+                htmlFor="halb"
+              >
+                Halb
               </Label>
               <Input {...register("halb")} placeholder="Halb" id="halb" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs" htmlFor="lote">
-                Lote MP <span className="text-red-600">*</span>
+              <Label
+                className="text-xs after:text-red-600 after:content-['*']"
+                htmlFor="lote"
+              >
+                Lote MP
               </Label>
               <Input
                 {...register("lote_and_fixture")}
@@ -259,9 +313,11 @@ export default function NewNpi() {
               />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs" htmlFor="mp">
-                Previsão de chegada MP e Fixture{" "}
-                <span className="text-red-600">*</span>
+              <Label
+                className="text-xs after:text-red-600 after:content-['*']"
+                htmlFor="mp"
+              >
+                Previsão de chegada MP e Fixture b
               </Label>
               <Input
                 {...register("arrival_of_mp_and_fixture")}
@@ -270,7 +326,10 @@ export default function NewNpi() {
               />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs" htmlFor="pilot_eng">
+              <Label
+                className="text-xs after:text-red-600 after:content-['*']"
+                htmlFor="pilot_eng"
+              >
                 Piloto de Eng.
               </Label>
               <Input
@@ -280,7 +339,10 @@ export default function NewNpi() {
               />
             </div>
             <div className="flex flex-col gap-0.5">
-              <Label className="text-xs" htmlFor="pilot_eng">
+              <Label
+                className="text-xs after:text-red-600 after:content-['*']"
+                htmlFor="pilot_eng"
+              >
                 Piloto de Prod.
               </Label>
               <Input
@@ -289,13 +351,107 @@ export default function NewNpi() {
                 id="pilot_eng"
               />
             </div>
-            <AlertDialogFooter>
+            <div className="flex flex-col gap-0.5">
+              <Label className="text-xs">Status Piloto Eng.</Label>
+              <Controller
+                control={control}
+                name="engineering_pilot_status"
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    onValueChange={(value) => field.onChange(value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione um status" />
+                    </SelectTrigger>
+                    <SelectGroup>
+                      <SelectContent>
+                        <SelectLabel>Status de Piloto</SelectLabel>
+                        <SelectItem value="Em Processo">Em Processo</SelectItem>
+                        <SelectItem value="Atrasado">Atrasado</SelectItem>
+                        <SelectItem value="Concluído">Concluído</SelectItem>
+                      </SelectContent>
+                    </SelectGroup>
+                  </Select>
+                )}
+              />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <Label
+                className={cn(
+                  "text-xs",
+                  selectStatusEng === "Atrasado"
+                    ? "after:text-red-600 after:content-['*']"
+                    : "",
+                )}
+                htmlFor="justification_engineering"
+              >
+                Justificativa de Eng.
+              </Label>
+              <Input
+                type="text"
+                {...register("justification_engineering")}
+                id="justification_engineering"
+              />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <Label className="text-xs">Status Piloto Prod.</Label>
+              <Controller
+                control={control}
+                name="production_pilot_status"
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    onValueChange={(value) => field.onChange(value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione um status" />
+                    </SelectTrigger>
+                    <SelectGroup>
+                      <SelectContent>
+                        <SelectLabel>Status de Piloto</SelectLabel>
+                        <SelectItem value="Em Processo">Em Processo</SelectItem>
+                        <SelectItem value="Atrasado">Atrasado</SelectItem>
+                        <SelectItem value="Concluído">Concluído</SelectItem>
+                      </SelectContent>
+                    </SelectGroup>
+                  </Select>
+                )}
+              />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <Label
+                htmlFor="justification_production"
+                className={cn(
+                  "text-xs",
+                  selectStatusProd === "Atrasado"
+                    ? "after:text-red-600 after:content-['*']"
+                    : "",
+                )}
+              >
+                Justificativa de Prod.
+              </Label>
+              <Input
+                type="text"
+                {...register("justification_production")}
+                id="justification_production"
+              />
+            </div>
+            <AlertDialogFooter className="col-span-3">
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 className="w-36 cursor-pointer bg-blue-600 hover:bg-blue-700"
-                onClick={handleSubmit((data) => handleCreate(data))}
+                onClick={handleSubmit((data) => handleUpdate(data))}
+                disabled={isPending}
               >
-                Programar
+                {isPending ? (
+                  <p className="flex items-center gap-1">
+                    Atualizando Programação{" "}
+                    <Loader size={12} className="animate-spin" />
+                  </p>
+                ) : (
+                  <p>Atualizar</p>
+                )}
               </AlertDialogAction>
             </AlertDialogFooter>
           </form>

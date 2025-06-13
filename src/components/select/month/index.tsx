@@ -5,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
 interface SelectMonthProps {
@@ -12,7 +13,12 @@ interface SelectMonthProps {
 }
 
 export function SelectMonth({ name }: SelectMonthProps) {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
+  const currentMonth = new Date().getMonth() + 1;
+
+  useEffect(() => {
+    setValue(name, currentMonth.toString());
+  }, [name, currentMonth, setValue]);
   return (
     <Controller
       control={control}

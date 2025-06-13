@@ -1,9 +1,6 @@
-"use client";
-
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -17,9 +14,9 @@ const chartConfig = {
   },
   concluido: {
     label: "Concluído",
-    color: "#FF3F33",
+    color: "#0065F8",
   },
-} satisfies ChartConfig;
+};
 
 interface NpiPerformanceAnalysisProps {
   performance: PerformanceData[];
@@ -35,7 +32,13 @@ export function NpiPerformanceAnalysis({
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart data={performance}>
+          <BarChart
+            accessibilityLayer
+            data={performance}
+            margin={{
+              top: 20,
+            }}
+          >
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="month"
@@ -46,10 +49,24 @@ export function NpiPerformanceAnalysis({
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
+              content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="total" fill="var(--color-total)" radius={4} />
-            <Bar dataKey="concluido" fill="var(--color-concluido)" radius={4} />
+            <Bar dataKey="total" fill="var(--color-total)" radius={8}>
+              <LabelList
+                position="top"
+                offset={12}
+                className="fill-foreground"
+                fontSize={12}
+              />
+            </Bar>
+            <Bar dataKey="concluido" fill="var(--color-concluido)" radius={8}>
+              <LabelList
+                position="top"
+                offset={12}
+                className="fill-foreground"
+                fontSize={12}
+              />
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>

@@ -31,7 +31,7 @@ export default function ModelsMain() {
   });
   const { watch, register } = methods;
   const [currentPage, setCurrentPage] = useState(0);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(8);
 
   const handlePageClick = (newPage: number) => {
     setCurrentPage(newPage);

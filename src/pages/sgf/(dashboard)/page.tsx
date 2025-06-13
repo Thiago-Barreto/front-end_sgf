@@ -1,4 +1,3 @@
-import { SelectMonth } from "@/components/select/month";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { FormProvider, useForm } from "react-hook-form";
@@ -10,11 +9,23 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { NpiPerformanceAnalysis } from "./npi/npiPerformanceAnalysis";
+import { Input } from "@/components/ui/input";
 
 export default function DashboardNpi() {
-  const methods = useForm();
-  const { watch } = methods;
+  const methods = useForm({
+    defaultValues: { month: "" },
+  });
+  const { register, watch, setValue } = methods;
+
   const month = watch("month");
+
+  const year = new Date().getFullYear();
+
+  const currentMonth = new Date().getMonth() + 1;
+  useEffect(() => {
+    setValue("month", currentMonth.toString());
+  }, [currentMonth, setValue]);
+
   const {
     npi = [],
     monthlyCount = [],
@@ -55,7 +66,6 @@ export default function DashboardNpi() {
   const prevSlide = () => {
     setIndex((prev) => (prev === 0 ? distinctFamilies.length - 1 : prev - 1));
   };
-  const year = new Date().getFullYear();
 
   return (
     <LayoutMain>
@@ -68,7 +78,7 @@ export default function DashboardNpi() {
           />
           <FormProvider {...methods}>
             <form>
-              <SelectMonth name="month" />
+              <Input type="month" {...register("month")} />
             </form>
           </FormProvider>
         </div>
@@ -113,24 +123,22 @@ export default function DashboardNpi() {
                 {familyItems.length > 0 ? (
                   <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
                     {familyItems.map((item) => {
-                      let statusColor = "bg-gray-500";
+                      let statusColor;
                       if (item.status === "Concluído") {
-                        statusColor = "bg-green-500";
-                      } else if (item.status === "Atrasado") {
-                        statusColor = "bg-red-500";
+                        statusColor =
+                          "bg-green-500 absolute top-1 right-1 h-3 w-3 rounded-full";
                       } else if (item.status === "Em Processo") {
-                        statusColor = "animate-pulse bg-yellow-500";
+                        statusColor =
+                          "animate-pulse bg-yellow-500 absolute top-1 right-1 h-3 w-3 rounded-full";
                       }
 
                       return (
                         <motion.div
                           layout
                           key={item.id}
-                          className="relative flex h-full w-full flex-col items-center justify-center rounded-lg border border-blue-600 p-2"
+                          className={`relative flex h-full w-full flex-col items-center justify-center rounded-lg border border-blue-600 p-2 ${item.status === "Atrasado" && "animate-pulse border-stone-100 bg-red-500 text-stone-100"}`}
                         >
-                          <span
-                            className={`absolute top-1 right-1 h-3 w-3 rounded-full ${statusColor}`}
-                          ></span>
+                          <span className={`${statusColor}`}></span>
                           <h2 className="text-lg">
                             {currentFamily === "SSD" ||
                             currentFamily === "DDR" ? (

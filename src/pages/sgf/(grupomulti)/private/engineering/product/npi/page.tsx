@@ -21,17 +21,17 @@ import {
 } from "@/schema/private/engineering/product/npi";
 import { ExcelExport } from "@/components/buttons/excel";
 import NewNpi from "./actions/register/page";
-import { data } from "react-router-dom";
+import ProgrammingNpiUpdate from "./actions/update/page";
+import moment from "moment";
 
 export default function NpiMain() {
   const { data: npi = [] } = useNpiAll();
-  console.log(npi);
   const methods = useForm<NpiSearch>({
     resolver: zodResolver(NpiWithoutId),
   });
   const { watch, register } = methods;
   const [currentPage, setCurrentPage] = useState(0);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(9);
 
   const handlePageClick = (newPage: number) => {
     setCurrentPage(newPage);
@@ -74,9 +74,7 @@ export default function NpiMain() {
           <NewNpi />
           <ExcelExport data={filteredModels} fileName="Todos os NPI" />
         </div>
-        <div
-          className={`flex flex-col ${npi.length <= 15 ? "h-[460px] 2xl:h-[752px]" : ""}`}
-        >
+        <div className={`flex flex-col ${npi.length <= 9 && ""}`}>
           <div className="flex flex-2/3 flex-col overflow-hidden rounded-md border">
             <Table>
               <TableHeader className="bg-background sticky top-0 z-10 shadow-sm">
@@ -117,6 +115,16 @@ export default function NpiMain() {
                       className="w-34"
                     />
                   </TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -149,10 +157,14 @@ export default function NpiMain() {
                         {data.halb}
                       </TableCell>
                       <TableCell className="border text-center">
-                        {data.estimated_engineering_pilot_date}
+                        {moment(data.estimated_engineering_pilot_date).format(
+                          "DD/MM/YYYY",
+                        )}
                       </TableCell>
                       <TableCell className="border text-center">
-                        {data.estimated_pilot_production_date}
+                        {moment(data.estimated_pilot_production_date).format(
+                          "DD/MM/YYYY",
+                        )}
                       </TableCell>
                       <TableCell className="border">
                         <Badge className="border border-stone-200 bg-transparent text-stone-700 dark:text-stone-400">
@@ -169,7 +181,7 @@ export default function NpiMain() {
                         </Badge>
                       </TableCell>
                       <TableCell className="border">
-                        {/* <ModelsUpdate initialData={data} /> */}
+                        <ProgrammingNpiUpdate initialData={data} />
                       </TableCell>
                     </TableRow>
                   );

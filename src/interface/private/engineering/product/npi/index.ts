@@ -1,3 +1,5 @@
+type statusLine = "Em Processo" | "Atrasado" | "Concluído";
+
 export interface NpiData {
   id: number;
   code: string;
@@ -14,8 +16,8 @@ export interface NpiData {
   status: string;
   justification_engineering: string;
   justification_production: string;
-  production_pilot_status: string;
-  engineering_pilot_status: string;
+  production_pilot_status: statusLine;
+  engineering_pilot_status: statusLine;
   date_of_the_month: string;
 }
 

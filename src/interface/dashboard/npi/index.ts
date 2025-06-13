@@ -1,24 +1,24 @@
 export interface NpiData {
-  DateCreate: string;
-  UserCreate: number;
-  arrival_of_mp_and_fixture: string;
+  id: number;
   code: string;
-  date_of_the_month: string;
   description: string;
-  engineering_pilot_status: string;
-  estimated_engineering_pilot_date: string;
-  estimated_pilot_production_date: string;
   family: string;
   halb: string;
-  id: number;
-  justification_engineering: null;
-  justification_production: null;
+  type_of_shipment: string;
+  type_of_production: string;
+  arrival_of_mp_and_fixture: string;
   lote_and_fixture: string;
   product_class: string;
+  engineering_pilot_status: string;
   production_pilot_status: string;
   status: string;
-  type_of_production: string;
-  type_of_shipment: string;
+  UserCreate: number;
+  DateCreate: string;
+  justification_engineering: string;
+  justification_production: string;
+  estimated_engineering_pilot_date: string;
+  estimated_pilot_production_date: string;
+  date_of_the_month: string;
 }
 
 export interface MonthData {

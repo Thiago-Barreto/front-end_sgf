@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 const fetchData = async (month: number) => {
+  console.log(month);
   try {
     const response = await axios.get<DashboardNpiResponse>(
       `${import.meta.env.VITE_API_KEY_PROD}/dashboard/npi`,
