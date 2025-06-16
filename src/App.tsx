@@ -7,6 +7,7 @@ import DashboardNpi from "./pages/sgf/(dashboard)/page";
 import UserMain from "./pages/sgf/(grupomulti)/public/users/page";
 import ModelsMain from "./pages/sgf/(grupomulti)/private/engineering/product/models/page";
 import NpiMain from "./pages/sgf/(grupomulti)/private/engineering/product/npi/page";
+import EquipmentsMain from "./pages/sgf/(grupomulti)/shared/equipments/page";
 
 export function AnimatesRoutes() {
   return (
@@ -16,12 +17,16 @@ export function AnimatesRoutes() {
         <Route path="/sgf/npi schedule" element={<DashboardNpi />} />
         <Route path="/sgf/grupomulti/public/users" element={<UserMain />} />
         <Route
-          path="/sgf/grupomulti/private/engineering/models"
+          path="/sgf/grupomulti/private/engineering/product/models"
           element={<ModelsMain />}
         />
         <Route
-          path="/sgf/grupomulti/private/engineering/npi"
+          path="/sgf/grupomulti/private/engineering/product/npi"
           element={<NpiMain />}
+        />
+        <Route
+          path="/sgf/grupomulti/shared/equipments"
+          element={<EquipmentsMain />}
         />
         {/* <Route path="*" element={<DefaultErro />} /> */}
       </Routes>

@@ -61,7 +61,7 @@ export function useNewModel() {
   const mutate = useMutation({
     mutationFn: newModel,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["models"] });
+      queryClient.invalidateQueries({ queryKey: ["models", "family"] });
     },
   });
   return mutate;
@@ -94,7 +94,7 @@ export function useModelUpdate() {
   const mutate = useMutation({
     mutationFn: ({ data }: { data: ModelsTypeUpdate }) => updateModel(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["models"] });
+      queryClient.invalidateQueries({ queryKey: ["models", ["family"]] });
     },
   });
   return mutate;

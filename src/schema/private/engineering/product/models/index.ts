@@ -21,10 +21,10 @@ export const ModelsSchema = z.object({
     .string()
     .nonempty()
     .transform((data) => data.toUpperCase()),
-  Qtd_inner: z.string().nonempty().trim(),
-  Qtd_caixa: z.string().nonempty().trim(),
-  Peso_master: z.string().nonempty().trim(),
-  Peso_inner: z.string().nonempty().trim(),
+  Qtd_inner: z.number(),
+  Qtd_caixa: z.number(),
+  Peso_master: z.number(),
+  Peso_inner: z.number(),
   Ean: z
     .string()
     .nonempty()

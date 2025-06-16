@@ -23,9 +23,11 @@ import { Pagination } from "@/components/pagination";
 import { ExcelExport } from "@/components/buttons/excel";
 import NewModel from "./actions/register/page";
 import ModelsUpdate from "./actions/update/page";
+import FastCreate from "./actions/register/fastCreate";
 
 export default function ModelsMain() {
-  const { data: models = [], isLoading } = useModelsAll();
+  const { data = [], isLoading } = useModelsAll();
+  const models = data as ModelsData[];
   const methods = useForm<ModelsSearch>({
     resolver: zodResolver(ModelsWithoutId),
   });
@@ -105,15 +107,20 @@ export default function ModelsMain() {
     return Math.ceil(filteredModels.length / itemsPerPage);
   }, [filteredModels.length, itemsPerPage]);
 
+  const lastModel = models.length > 0 ? models[models.length - 1] : undefined;
+
   return (
     <LayoutGrupoMulti titlePage="Modelos">
       {isLoading ? (
         <p>Carregando dados</p>
       ) : (
         <section className="flex flex-1 flex-col gap-2 rounded-xl px-3 lg:w-96">
-          <div className="flex w-full items-center gap-4">
-            <NewModel />
-            <ExcelExport data={filteredModels} fileName="Todos os Modelos" />
+          <div className="flex w-full items-center justify-between gap-4">
+            <div className="flex w-full items-center gap-4">
+              <NewModel />
+              <ExcelExport data={filteredModels} fileName="Todos os Modelos" />
+            </div>
+            {lastModel && <FastCreate initialData={lastModel} />}
           </div>
           <div
             className={`flex flex-col ${models.length <= 15 ? "h-[460px] 2xl:h-[752px]" : ""}`}

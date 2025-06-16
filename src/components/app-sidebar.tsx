@@ -6,10 +6,8 @@ import {
   ChartNoAxesCombined,
   Cpu,
   FolderKanban,
-  Map,
+  PackageOpen,
   PackageSearch,
-  PieChart,
-  SquareTerminal,
   UserRoundCog,
 } from "lucide-react";
 
@@ -31,17 +29,16 @@ const data = {
     {
       name: "Test Engineering",
       logo: Cpu,
-      plan: "Enterprise",
+      plan: "Planejamento e Execução de Testes",
       navMain: [
         {
-          title: "Playground",
-          url: "#",
-          icon: SquareTerminal,
+          title: "Entrada de Materiais",
+          icon: PackageOpen,
           isActive: true,
           items: [
             {
-              title: "History",
-              url: "#",
+              title: "Equipamentos",
+              url: "/sgf/grupomulti/shared/equipments",
             },
             {
               title: "Starred",
