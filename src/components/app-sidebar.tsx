@@ -60,13 +60,13 @@ const data = {
         {
           id: 1,
           title: "Modelos",
-          url: "/sgf/grupomulti/private/engineering/models",
+          url: "/sgf/grupomulti/private/engineering/product/models",
           icon: FolderKanban,
         },
         {
           id: 2,
           title: "NPI",
-          url: "/sgf/grupomulti/private/engineering/npi",
+          url: "/sgf/grupomulti/private/engineering/product/npi",
           icon: ChartNoAxesCombined,
         },
       ],

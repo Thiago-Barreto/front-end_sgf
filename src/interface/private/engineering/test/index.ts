@@ -15,8 +15,13 @@ export interface EquipmentData {
   location: string;
   calibrationDate: string;
   nextCalibration: string;
+  amount: number;
+  product: string;
+  similar: string;
 }
 
 export interface EquipmentResponse {
   equipments: EquipmentData[];
+  message: string;
+  title: string;
 }

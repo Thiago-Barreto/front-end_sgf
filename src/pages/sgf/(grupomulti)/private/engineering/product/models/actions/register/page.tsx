@@ -30,6 +30,7 @@ import { InfoIcon } from "lucide-react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useNewModel } from "@/api/private/engineering/product/models";
 import { useState } from "react";
+import { TypeToNumber } from "@/utils/formatted/type/number";
 
 export default function NewModel() {
   const methods = useForm<ModelsCreate>({
@@ -40,15 +41,6 @@ export default function NewModel() {
 
   const clearForm = () => {
     reset();
-  };
-
-  const handleWeightAndAmount = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: string,
-  ) => {
-    const value = event.target.value;
-    const numericValue = value.replace(/\D/g, "");
-    setValue(field, numericValue, { shouldValidate: true });
   };
 
   const { mutateAsync } = useNewModel();
@@ -101,7 +93,7 @@ export default function NewModel() {
               <Input
                 id="qtd_inner"
                 {...register("Qtd_inner")}
-                onChange={(event) => handleWeightAndAmount(event, "Qtd_inner")}
+                onChange={(event) => TypeToNumber(event, setValue, "Qtd_inner")}
               />
             </div>
             <div className="flex flex-col gap-0.5">
@@ -111,7 +103,7 @@ export default function NewModel() {
               <Input
                 id="qtd_box"
                 {...register("Qtd_caixa")}
-                onChange={(event) => handleWeightAndAmount(event, "Qtd_caixa")}
+                onChange={(event) => TypeToNumber(event, setValue, "Qtd_caixa")}
               />
             </div>
             <div className="flex flex-col gap-0.5">
@@ -122,7 +114,7 @@ export default function NewModel() {
                 id="peso_master"
                 {...register("Peso_master")}
                 onChange={(event) =>
-                  handleWeightAndAmount(event, "Peso_master")
+                  TypeToNumber(event, setValue, "Peso_master")
                 }
               />
             </div>
@@ -133,7 +125,9 @@ export default function NewModel() {
               <Input
                 id="peso_inner"
                 {...register("Peso_inner")}
-                onChange={(event) => handleWeightAndAmount(event, "Peso_inner")}
+                onChange={(event) =>
+                  TypeToNumber(event, setValue, "Peso_inner")
+                }
               />
             </div>
             <div className="flex flex-col gap-0.5">

@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSignIn } from "@/api/auth/signIn";
 import { LoaderIcon } from "lucide-react";
 import { authSchema, type authType } from "@/schema/auth";
+import { TypeToNumber } from "@/utils/formatted/type/number";
 
 export default function SignIn({
   className,
@@ -17,7 +18,7 @@ export default function SignIn({
   const methods = useForm<authType>({
     resolver: zodResolver(authSchema),
   });
-  const { register, handleSubmit } = methods;
+  const { register, handleSubmit, setValue } = methods;
   const { mutateAsync, isPending } = useSignIn();
 
   const handleSignIn = async (data: authType) => {
@@ -45,6 +46,9 @@ export default function SignIn({
                         id="login"
                         type="text"
                         {...register("UserID")}
+                        onChange={(event) =>
+                          TypeToNumber(event, setValue, "UserID")
+                        }
                         placeholder="Ex: 11286"
                       />
                     </div>

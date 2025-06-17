@@ -1,10 +1,5 @@
-import { useEquipmentsAll } from "@/api/private/engineering/test";
 import type { EquipmentData } from "@/interface/private/engineering/test";
 import LayoutGrupoMulti from "@/pages/sgf/(grupomulti)/layout";
-import {
-  EquipmentsWithoutId,
-  type EquipmentsType,
-} from "@/schema/private/engineering/test/equipments";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -20,6 +15,15 @@ import {
 import { Pagination } from "@/components/pagination";
 import { Input } from "@/components/ui/input";
 import CreateEquipment from "./actions/register/page";
+import { ExcelExport } from "@/components/buttons/excel";
+import CopyText from "@/components/copy";
+import {
+  EquipmentsWithoutId,
+  type EquipmentsType,
+} from "@/schema/shared/equipments";
+import { useEquipmentsAll } from "@/api/shared/equipment";
+import EquipmentUpdate from "./actions/update/page";
+import ExitMovements from "./actions/movements/exit/page";
 
 export default function EquipmentsMain() {
   const { data: equipments = [], isLoading } = useEquipmentsAll();
@@ -39,10 +43,14 @@ export default function EquipmentsMain() {
   const filters = watch();
 
   const filteredModels = useMemo(() => {
-    return equipments.filter((data: EquipmentData) => {
-      const name =
+    const equipmentsArray = Array.isArray(equipments) ? equipments : [];
+    return equipmentsArray.filter((data: EquipmentData) => {
+      const serial =
         !filters.serial ||
         data.serial?.toLowerCase().includes(filters.serial.toLowerCase());
+      const product =
+        !filters.product ||
+        data.product?.toLowerCase().includes(filters.product.toLowerCase());
       const codeSap =
         !filters.code_sap ||
         data.code_sap?.toLowerCase().includes(filters.code_sap.toLowerCase());
@@ -52,7 +60,7 @@ export default function EquipmentsMain() {
           ?.toLowerCase()
           .includes(filters.description.toLowerCase());
 
-      return codeSap && name && description;
+      return codeSap && serial && description && product;
     });
   }, [equipments, filters]);
 
@@ -72,17 +80,19 @@ export default function EquipmentsMain() {
         </p>
       ) : (
         <section className="flex flex-1 flex-col gap-2 rounded-xl px-3 lg:w-96">
-          <div>
+          <div className="flex items-center gap-2">
             <CreateEquipment />
+            <ExcelExport data={filteredModels} fileName="Equipamentos" />
           </div>
           <div
-            className={`flex flex-col ${equipments.length <= 15 ? "h-[460px] 2xl:h-[752px]" : ""}`}
+            className={`flex flex-col ${itemsPerPage >= 8 ? "" : "h-[462px] 2xl:h-[752px]"}`}
           >
             <div className="flex flex-2/3 flex-col overflow-hidden rounded-md border">
               <Table>
                 <TableHeader className="bg-background sticky top-0 z-10 shadow-sm">
                   <TableRow>
                     <TableHead>Serial</TableHead>
+                    <TableHead>Modelo</TableHead>
                     <TableHead>Código do SAP</TableHead>
                     <TableHead>Descrição</TableHead>
                     <TableHead>Família</TableHead>
@@ -90,6 +100,8 @@ export default function EquipmentsMain() {
                     <TableHead>Requer Calib.</TableHead>
                     <TableHead>Certificado de Calib.</TableHead>
                     <TableHead>Nota fiscal</TableHead>
+                    <TableHead>Valor do Eqp</TableHead>
+                    <TableHead>Similar</TableHead>
                     <TableHead>Galpão</TableHead>
                     <TableHead>Localização</TableHead>
                     <TableHead>Status</TableHead>
@@ -100,6 +112,13 @@ export default function EquipmentsMain() {
                       <Input
                         placeholder="Pesquisar"
                         {...register("serial")}
+                        className="w-34"
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <Input
+                        placeholder="Pesquisar"
+                        {...register("product")}
                         className="w-34"
                       />
                     </TableHead>
@@ -141,30 +160,23 @@ export default function EquipmentsMain() {
                     <TableHead>
                       <Input
                         placeholder="Pesquisar"
+                        {...register("calibrationCertificate")}
+                        className="w-34"
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <Input
+                        placeholder="Pesquisar"
                         {...register("invoice")}
                         className="w-34"
                       />
                     </TableHead>
                     <TableHead>
-                      <Input
+                      {/* <Input
                         placeholder="Pesquisar"
-                        {...register("shed")}
+                        {...register("")}
                         className="w-34"
-                      />
-                    </TableHead>
-                    <TableHead>
-                      <Input
-                        placeholder="Pesquisar"
-                        {...register("status")}
-                        className="w-34"
-                      />
-                    </TableHead>
-                    <TableHead>
-                      <Input
-                        placeholder="Pesquisar"
-                        {...register("location")}
-                        className="w-34"
-                      />
+                      /> */}
                     </TableHead>
                     <TableHead></TableHead>
                   </TableRow>
@@ -173,10 +185,17 @@ export default function EquipmentsMain() {
                   {currentData?.map((data: EquipmentData) => {
                     return (
                       <TableRow key={data.id}>
-                        <TableCell className="border">{data.serial}</TableCell>
                         <TableCell className="border">
-                          <p className="flex items-center gap-1 text-xs">
+                          <p className="flex items-center">
+                            {data.serial}
+                            <CopyText text={data.serial} />
+                          </p>
+                        </TableCell>
+                        <TableCell className="border">{data.product}</TableCell>
+                        <TableCell className="border">
+                          <p>
                             {data.code_sap}
+                            <CopyText text={data.code_sap} />
                           </p>
                         </TableCell>
                         <TableCell className="border">
@@ -198,13 +217,24 @@ export default function EquipmentsMain() {
                         <TableCell className="border text-center">
                           {data.invoice}
                         </TableCell>
+                        <TableCell className="border text-center">
+                          R$ {data.amount}
+                        </TableCell>
+                        <TableCell className="border text-center">
+                          {data.similar}
+                        </TableCell>
                         <TableCell className="border">{data.shed}</TableCell>
                         <TableCell className="border">
                           {data.location}
                         </TableCell>
                         <TableCell className="border">{data.status}</TableCell>
-                        <TableCell className="border">
-                          {/* <ModelsUpdate initialData={data} /> */}
+                        <TableCell className="flex">
+                          <div className="flex gap-4">
+                            <EquipmentUpdate initialData={data} />
+                            {data.status !== "Em linha" && (
+                              <ExitMovements initialData={data} />
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
