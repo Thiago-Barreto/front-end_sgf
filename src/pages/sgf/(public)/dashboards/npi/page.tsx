@@ -1,15 +1,15 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { FormProvider, useForm } from "react-hook-form";
-import { ChartBarLabel } from "./npi/monthStatus";
-import { ChartLineLabel } from "./npi/annualPerformancePerFamily";
 import { useDashboardNpi } from "@/api/dashboard/npi";
-import LayoutMain from "../layout";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { NpiPerformanceAnalysis } from "./npi/npiPerformanceAnalysis";
 import { Input } from "@/components/ui/input";
+import LayoutMain from "@/pages/sgf/(public)/dashboards/layout";
+import { ChartBarLabel } from "./graphics/monthStatus";
+import { ChartLineLabel } from "./graphics/annualPerformancePerFamily";
+import { NpiPerformanceAnalysis } from "./graphics/npiPerformanceAnalysis";
 
 export default function DashboardNpi() {
   const methods = useForm({
@@ -69,7 +69,7 @@ export default function DashboardNpi() {
 
   return (
     <LayoutMain>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b-2 bg-blue-600 text-stone-50 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 dark:bg-blue-600">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator
@@ -78,7 +78,11 @@ export default function DashboardNpi() {
           />
           <FormProvider {...methods}>
             <form>
-              <Input type="month" {...register("month")} />
+              <Input
+                type="month"
+                {...register("month")}
+                className="bg-stone-100 text-stone-950"
+              />
             </form>
           </FormProvider>
         </div>

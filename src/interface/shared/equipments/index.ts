@@ -18,6 +18,7 @@ export interface EquipmentData {
   amount: number;
   product: string;
   similar: string;
+  sector: string;
 }
 
 export interface EquipmentResponse {

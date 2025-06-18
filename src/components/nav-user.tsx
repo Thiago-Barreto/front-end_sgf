@@ -1,5 +1,4 @@
 import { ChevronsUpDown, LogOut } from "lucide-react";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -19,7 +18,7 @@ import {
 import { getUserLogin } from "@/utils/user";
 import { useUserLogout } from "@/api/auth/signIn";
 import { ModeToggle } from "./mode-toggle";
-import ProfileUser from "@/pages/sgf/(grupomulti)/public/users/profile/page";
+import ProfileUser from "@/pages/sgf/(public)/users/profile/page";
 
 export function NavUser() {
   const { isMobile } = useSidebar();

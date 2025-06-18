@@ -1,5 +1,4 @@
-import type { EquipmentData } from "@/interface/private/engineering/test";
-import LayoutGrupoMulti from "@/pages/sgf/(grupomulti)/layout";
+import LayoutGrupoMulti from "@/pages/sgf/layout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -23,7 +22,8 @@ import {
 } from "@/schema/shared/equipments";
 import { useEquipmentsAll } from "@/api/shared/equipment";
 import EquipmentUpdate from "./actions/update/page";
-import ExitMovements from "./actions/movements/exit/page";
+import ExitMovements from "./actions/movements/page";
+import type { EquipmentData } from "@/interface/shared/equipments";
 
 export default function EquipmentsMain() {
   const { data: equipments = [], isLoading } = useEquipmentsAll();

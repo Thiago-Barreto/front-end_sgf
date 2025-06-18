@@ -1,5 +1,5 @@
 import { useModelsAll } from "@/api/private/engineering/product/models";
-import LayoutGrupoMulti from "@/pages/sgf/(grupomulti)/layout";
+import LayoutGrupoMulti from "@/pages/sgf/layout";
 import {
   Table,
   TableBody,

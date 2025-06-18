@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  ArrowLeftRight,
   AudioWaveform,
   Bot,
   ChartArea,
@@ -38,15 +39,18 @@ const data = {
           items: [
             {
               title: "Equipamentos",
-              url: "/sgf/grupomulti/shared/equipments",
+              url: "/sgf/engineering/equipments",
             },
+          ],
+        },
+        {
+          title: "Movimentações",
+          icon: ArrowLeftRight,
+          isActive: false,
+          items: [
             {
-              title: "Starred",
-              url: "#",
-            },
-            {
-              title: "Settings",
-              url: "#",
+              title: "Equipamentos",
+              url: "/sgf/engineering/movements/equipments",
             },
           ],
         },
@@ -60,13 +64,13 @@ const data = {
         {
           id: 1,
           title: "Modelos",
-          url: "/sgf/grupomulti/private/engineering/product/models",
+          url: "/sgf/engineering/models",
           icon: FolderKanban,
         },
         {
           id: 2,
           title: "NPI",
-          url: "/sgf/grupomulti/private/engineering/product/npi",
+          url: "/sgf/engineering/npi",
           icon: ChartNoAxesCombined,
         },
       ],
@@ -100,14 +104,22 @@ const data = {
   ],
   public: [
     {
-      name: "Cronograma de NPI",
-      url: "/sgf/npi schedule",
-      icon: ChartArea,
+      name: "Dashboards",
+      icon: FolderKanban,
+      isActive: true,
+      items: [
+        {
+          title: "Cronograma de NPI",
+          id: 1,
+          url: "/sgf/npi schedule",
+        },
+      ],
     },
     {
       name: "Usuários",
-      url: "/sgf/grupomulti/public/users",
+      url: "/sgf/users",
       icon: UserRoundCog,
+      isActive: false,
     },
   ],
 };

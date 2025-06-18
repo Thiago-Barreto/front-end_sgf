@@ -1,5 +1,5 @@
 import { useUsersAll } from "@/api/user/profile";
-import LayoutGrupoMulti from "../../layout";
+import LayoutGrupoMulti from "@/pages/sgf/layout";
 import {
   Table,
   TableBody,

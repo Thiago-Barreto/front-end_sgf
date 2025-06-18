@@ -21,7 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { EquipmentData } from "@/interface/private/engineering/test";
 import { MovementSchema, type MovementsType } from "@/schema/shared/equipments";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { TypeToNumber } from "@/utils/formatted/type/number";
 import { useState } from "react";
+import type { EquipmentData } from "@/interface/shared/equipments";
 
 interface ExitMovementsProps {
   initialData: EquipmentData;
@@ -45,7 +45,7 @@ export default function ExitMovements({
       ...initialData,
       line: "",
       user_return: "",
-      detailsMoveExit: "",
+      details: "",
     },
   });
   const { register, handleSubmit, control, watch, setValue } = methods;
@@ -58,7 +58,7 @@ export default function ExitMovements({
   const handleMovement = async (data: MovementsType) => {
     const isFormIncomplete =
       (shedOrLine === "shed" &&
-        (!data.user_return || !data.detailsMoveExit || data.shed === "")) ||
+        (!data.user_return || !data.details || data.shed === "")) ||
       (shedOrLine === "line" && !data.line);
     if (isFormIncomplete) {
       toast.info("Formulário incompleto", {
@@ -73,7 +73,7 @@ export default function ExitMovements({
       cleanedData = {
         ...cleanedData,
         user_return: "",
-        detailsMoveExit: "",
+        details: "",
       };
     } else if (shedOrLine === "shed") {
       cleanedData = {
@@ -88,7 +88,7 @@ export default function ExitMovements({
     setValue("line", "");
     setValue("shedOrLine", "");
     setValue("user_return", "");
-    setValue("detailsMoveExit", "");
+    setValue("details", "");
     setOpen(false);
   };
 
@@ -184,10 +184,7 @@ export default function ExitMovements({
                   <Label className="text-xs after:text-red-600 after:content-['*']">
                     Detalhes da movimentação
                   </Label>
-                  <Textarea
-                    className="resize-none"
-                    {...register("detailsMoveExit")}
-                  />
+                  <Textarea className="resize-none" {...register("details")} />
                 </div>
               </div>
             )}

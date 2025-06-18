@@ -1,4 +1,5 @@
-import type { EquipmentResponse } from "@/interface/private/engineering/test";
+import type { EquipmentResponse } from "@/interface/shared/equipments";
+import type { ReturnEquipmentsData } from "@/interface/shared/equipments/movements";
 import type {
   EquipmentCreateType,
   EquipmentUpdateType,
@@ -124,17 +125,22 @@ const movementExitEquipment = async (data: MovementsType) => {
       {
         ...data,
         user_exit: user.UserID,
+        sector: user.sector,
       },
     );
-    if (response.data.status !== 200 && response.data.status !== 201) {
+    const result = Number(response.data.result);
+
+    if (result !== 200 && result !== 201) {
       toast.error(response.data.title, {
         description: response.data.message,
       });
+      console.log(response.data);
       throw new Error(response.data);
+    } else {
+      toast.success(response.data.title, {
+        description: response.data.message,
+      });
     }
-    toast.success(response.data.title, {
-      description: response.data.message,
-    });
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response?.data) {
@@ -154,4 +160,39 @@ export function useMovementExitEquipment() {
     },
   });
   return mutate;
+}
+
+const activeEquipments = async () => {
+  const user = getUserLogin();
+  try {
+    const response = await axios.get<ReturnEquipmentsData>(
+      `${import.meta.env.VITE_API_KEY_PROD}/equipments/view/movements`,
+      {
+        params: {
+          sector: user.sector,
+        },
+      },
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        window.location.href = "/";
+        toast.error(error.response.data.message);
+      } else if (error.request) {
+        toast.error(error.response?.data.message);
+      }
+    }
+  }
+};
+
+export function useActiveEquipments() {
+  const query = useQuery({
+    queryKey: ["equipments"],
+    queryFn: activeEquipments,
+    refetchInterval: 60 * 5 * 1000,
+  });
+  return { ...query, actives: query.data?.actives };
 }

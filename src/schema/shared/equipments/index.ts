@@ -109,7 +109,7 @@ export const MovementSchema = EquipmentSchema.omit({
   shedOrLine: z.string().nonempty(""),
   user_return: z.string(),
   shed: z.string().transform((data) => data.toUpperCase()),
-  detailsMoveExit: z.string().transform((data) => data.toUpperCase()),
+  details: z.string().transform((data) => data.toUpperCase()),
 });
 
 export type MovementsType = z.infer<typeof MovementSchema>;

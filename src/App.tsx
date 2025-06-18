@@ -3,11 +3,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import SignIn from "./pages/auth/signIn/page";
-import DashboardNpi from "./pages/sgf/(dashboard)/page";
-import UserMain from "./pages/sgf/(grupomulti)/public/users/page";
-import ModelsMain from "./pages/sgf/(grupomulti)/private/engineering/product/models/page";
-import NpiMain from "./pages/sgf/(grupomulti)/private/engineering/product/npi/page";
-import EquipmentsMain from "./pages/sgf/(grupomulti)/shared/equipments/page";
+import DashboardNpi from "./pages/sgf/(public)/dashboards/npi/page";
+import UserMain from "./pages/sgf/(public)/users/page";
+import ModelsMain from "./pages/sgf/(private)/engineering/(product)/models/page";
+import NpiMain from "./pages/sgf/(private)/engineering/(product)/npi/page";
+import EquipmentsMain from "./pages/sgf/(shared)/equipments/page";
+import ReturnEquipments from "./pages/sgf/(shared)/moviments/equipments/page";
 
 export function AnimatesRoutes() {
   return (
@@ -15,18 +16,16 @@ export function AnimatesRoutes() {
       <Routes>
         <Route path="/" element={<SignIn />} />
         <Route path="/sgf/npi schedule" element={<DashboardNpi />} />
-        <Route path="/sgf/grupomulti/public/users" element={<UserMain />} />
+        <Route path="/sgf/users" element={<UserMain />} />
+        <Route path="/sgf/engineering/models" element={<ModelsMain />} />
+        <Route path="/sgf/engineering/npi" element={<NpiMain />} />
         <Route
-          path="/sgf/grupomulti/private/engineering/product/models"
-          element={<ModelsMain />}
-        />
-        <Route
-          path="/sgf/grupomulti/private/engineering/product/npi"
-          element={<NpiMain />}
-        />
-        <Route
-          path="/sgf/grupomulti/shared/equipments"
+          path="/sgf/engineering/equipments"
           element={<EquipmentsMain />}
+        />
+        <Route
+          path="/sgf/engineering/movements/equipments"
+          element={<ReturnEquipments />}
         />
         {/* <Route path="*" element={<DefaultErro />} /> */}
       </Routes>
